@@ -4,6 +4,7 @@ SG_ID="sg-051e7eba9b20c046f"
 AMI_ID="ami-0220d79f3f480ecf5"
 ZONE_ID="Z09279692055UBYT8TIQD"
 DOMAIN_NAME="srikanthchalla.online"
+
 for instance in $@
 do 
  INSTANCE_ID=$( aws ec2 run-instances \
@@ -29,6 +30,29 @@ if [ $instance == "frontend" ]; then
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
         )
-    echo "Ip Addres: $IP"
+    echo "Ip Addres: $IP of $instance"
 fi
+ aws route53 change-resource-record-sets \
+    --hosted-zone-id $ZONE_ID \
+    --change-batch '
+    {
+        "Comment": "Updating record",
+        "Changes": [
+            {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "'$RECORD_NAME'",
+                "Type": "A",
+                "TTL": 1,
+                "ResourceRecords": [
+                {
+                    "Value": "'$IP'"
+                }
+                ]
+            }
+            }
+        ]
+    }
+    '
+    echo "record updated for $instance"
 done
