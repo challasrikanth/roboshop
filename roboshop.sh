@@ -30,8 +30,10 @@ if [ $instance == "frontend" ]; then
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
         )
-    echo "Ip Addres: $IP of $instance"
+    RECORD_NAME="$instance.$DOMAIN_NAME"
+    
 fi
+echo "Ip Addres: $IP of $instance"
  aws route53 change-resource-record-sets \
     --hosted-zone-id $ZONE_ID \
     --change-batch '
