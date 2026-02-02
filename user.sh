@@ -44,7 +44,7 @@ else
 
 fi
 
-makdir -p /app
+mkdir -p /app
 VALIDATE $? "creating app directory "
 
 curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip  &>>$LOGS_FILE
